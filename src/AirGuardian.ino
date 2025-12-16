@@ -12,7 +12,7 @@
  *   - Alert system with severity levels
  *   - EEPROM-based configuration persistence
  * 
- * Author: Air Guardian Development Team
+ * Author: Gwenyth Ashlie Villanueva
  * Version: 2.0.0
  * Last Updated: 2025
  * =====================================================================
