@@ -158,7 +158,7 @@ int MQ7_BASELINE_ADC = 0;
 const uint8_t MQ_AVG_SAMPLES = 10;
 const int MQ2_CONVERSION = 50;   // Higher sensitivity for smoke detection
 const int MQ2_SENSITIVITY_MULTIPLIER = 6;   // Amplify deviation from baseline
-const int MQ7_SENSITIVITY_MULTIPLIER = 6;   // Amplify deviation from baseline
+const int MQ7_SENSITIVITY_MULTIPLIER = 1;   // Amplify deviation from baseline
 // =====================================================================
 // FUNCTION PROTOTYPES
 // =====================================================================
