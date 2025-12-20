@@ -1,22 +1,3 @@
-/*
- * =====================================================================
- * AIR GUARDIAN - ESP32 MAIN CONTROLLER FIRMWARE
- * =====================================================================
- * Description: Central controller for air quality monitoring system
- * Features:
- *   - Multi-sensor data acquisition (DHT11, MQ2, MQ7, Dust, Sound)
- *   - Automated barrier control with servo motor
- *   - Real-time air quality assessment
- *   - WiFi AP mode with web dashboard
- *   - RESTful API endpoints
- *   - Alert system with severity levels
- *   - EEPROM-based configuration persistence
- * 
- * Author: Gwenyth Ashlie Villanueva
- * Version: 2.0.0
- * Last Updated: 2025
- * =====================================================================
- */
 
 #include <WiFi.h>
 #include <WebServer.h>
@@ -27,47 +8,45 @@
 #include <stdlib.h>
 #include <vector>
 
-// =====================================================================
+
 // WIFI CONFIGURATION
-// =====================================================================
+
 const char* ssid = "Group1_Air_Quality";
 const char* password = "11111111";
 
 WebServer server(80);
 
-// =====================================================================
-// HARDWARE PIN DEFINITIONS (ESP32)
-// =====================================================================
-// Analog Sensors
-#define MQ2_PIN      34  // Smoke/Gas sensor (ADC1_CH6)
-#define MQ7_PIN      33  // Carbon Monoxide sensor (ADC1_CH5)
-#define DUST_PIN     32  // Dust/Particulate sensor (ADC1_CH4)
-#define SOUND_PIN    35  // Sound level sensor (ADC1_CH7)
 
-// Digital Sensors
-#define DHT_PIN      4   // Temperature & Humidity sensor
+// HARDWARE PIN DEFINITIONS (ESP32)
+
+// Analog Sensors
+#define MQ2_PIN      34
+#define MQ7_PIN      33
+#define DUST_PIN     32
+#define SOUND_PIN    35
+#define DHT_PIN      4
 #define DHTTYPE      DHT11
 
 // Actuators
-#define DUST_LED_PIN 18  // IR LED for dust sensor
-#define SERVO_PIN    15  // Barrier servo motor
+#define DUST_LED_PIN 18 
+#define SERVO_PIN    15
 
 // Visual/Audio Indicators
-#define LED_GREEN    14  // Good air quality indicator
-#define LED_YELLOW   27  // Moderate air quality indicator
-#define LED_RED      26  // Poor/Hazardous air quality indicator
-#define BUZZER_PIN   13  // Alert buzzer
-#define FAN_PIN      12  // Ventilation fan control
+#define LED_GREEN    14
+#define LED_YELLOW   27
+#define LED_RED      26
+#define BUZZER_PIN   13
 
-// =====================================================================
+
+
 // SENSOR OBJECTS
-// =====================================================================
+
 DHT dht(DHT_PIN, DHTTYPE);
 Servo barrierServo;
 
-// =====================================================================
+
 // SYSTEM CONFIGURATION & THRESHOLDS
-// =====================================================================
+
 // Air Quality Thresholds
 struct AirQualityThresholds {
   int mq2_moderate = 1800;
@@ -111,7 +90,7 @@ struct SystemState {
 // Alert Structure
 struct Alert {
   String message;
-  String severity; // "CRITICAL" or "INFO"
+  String severity;
   uint64_t timestamp;
   int mq2;
   int mq7;
@@ -135,33 +114,33 @@ bool timeSynced = false;
 bool manualTimeSet = false;
 int64_t manualTimeOffsetMs = 0;
 
-// =====================================================================
+
 // EEPROM CONFIGURATION
-// =====================================================================
+
 #define EEPROM_SIZE 64
 #define EEPROM_BARRIER_MODE_ADDR 0
 #define EEPROM_BARRIER_DURATION_ADDR 4
 
-// =====================================================================
+
 // DUST SENSOR TIMING (Sharp GP2Y10 compatible)
-// =====================================================================
+
 #define DUST_SAMPLE_TIME 280
 #define DUST_DELAY_TIME 40
 #define DUST_OFF_TIME 9680
-int dustBaselineAdc = 520;            // Baseline determined at startup
-const int DUST_CONVERSION = 15;       // Multiplier to convert baseline-adjusted ADC to µg/m³
-const uint8_t DUST_AVG_SAMPLES = 5;   // Samples per reading for stability
+int dustBaselineAdc = 520;
+const int DUST_CONVERSION = 15; 
+const uint8_t DUST_AVG_SAMPLES = 5;
 
 // MQ Sensors calibration params
 int MQ2_BASELINE_ADC = 0;
 int MQ7_BASELINE_ADC = 0;
 const uint8_t MQ_AVG_SAMPLES = 10;
-const int MQ2_CONVERSION = 50;   // Higher sensitivity for smoke detection
-const int MQ2_SENSITIVITY_MULTIPLIER = 6;   // Amplify deviation from baseline
-const int MQ7_SENSITIVITY_MULTIPLIER = 1;   // Amplify deviation from baseline
-// =====================================================================
+const int MQ2_CONVERSION = 50; 
+const int MQ2_SENSITIVITY_MULTIPLIER = 6;
+const int MQ7_SENSITIVITY_MULTIPLIER = 1;
+
 // FUNCTION PROTOTYPES
-// =====================================================================
+
 void setupWiFi();
 void setupTime();
 void setupSensors();
@@ -184,9 +163,9 @@ void checkESP8266Connection();
 String getAirQualityJSON();
 uint64_t currentTimestampMs();
 
-// =====================================================================
+
 // SETUP FUNCTION
-// =====================================================================
+
 void setup() {
   Serial.begin(115200);
   delay(1000);
@@ -219,9 +198,9 @@ void setup() {
   addAlert("System initialized successfully", "INFO");
 }
 
-// =====================================================================
+
 // MAIN LOOP
-// =====================================================================
+
 void loop() {
   server.handleClient();
   
@@ -244,9 +223,9 @@ void loop() {
   delay(10);
 }
 
-// =====================================================================
+
 // WIFI SETUP
-// =====================================================================
+
 void setupWiFi() {
   Serial.println("\n[WiFi] Configuring Access Point...");
   Serial.print("[WiFi] SSID: ");
@@ -262,13 +241,11 @@ void setupWiFi() {
   Serial.println("[WiFi] Access Point Ready!");
 }
 
-// Attempt to sync time for real timestamps; fall back to monotonic millis if NTP is unreachable
 void setupTime() {
   bootMonotonicMs = millis();
   timeSynced = false;
   manualTimeSet = false;
 
-  // Set timezone to Asia/Manila (UTC+8) without DST
   setenv("TZ", "PHT-8", 1);
   tzset();
   
@@ -306,9 +283,9 @@ uint64_t currentTimestampMs() {
   return static_cast<uint64_t>(millis());
 }
 
-// =====================================================================
+
 // SENSOR INITIALIZATION
-// =====================================================================
+
 void setupSensors() {
   Serial.println("\n[Sensors] Initializing...");
   
@@ -363,9 +340,8 @@ void setupSensors() {
   Serial.printf("[Sensors] Dust baseline=%d\n", dustBaselineAdc);
 }
 
-// =====================================================================
 // ACTUATOR INITIALIZATION
-// =====================================================================
+
 void setupActuators() {
   Serial.println("\n[Actuators] Initializing...");
   
@@ -374,17 +350,15 @@ void setupActuators() {
   pinMode(LED_YELLOW, OUTPUT);
   pinMode(LED_RED, OUTPUT);
   
-  // Buzzer and fan
+  // Buzzer
   pinMode(BUZZER_PIN, OUTPUT);
-  pinMode(FAN_PIN, OUTPUT);
-  
+
   // Initial state: all off
   digitalWrite(LED_GREEN, LOW);
   digitalWrite(LED_YELLOW, LOW);
   digitalWrite(LED_RED, LOW);
   digitalWrite(BUZZER_PIN, LOW);
-  digitalWrite(FAN_PIN, LOW);
-  
+
   // Initialize servo
   barrierServo.attach(SERVO_PIN);
   if (state.barrierOpen) {
@@ -395,14 +369,13 @@ void setupActuators() {
   
   Serial.println("[Actuators] LEDs configured");
   Serial.println("[Actuators] Buzzer configured");
-  Serial.println("[Actuators] Fan configured");
   Serial.println("[Actuators] Servo configured");
   Serial.println("[Actuators] Ready!");
 }
 
-// =====================================================================
+
 // WEB SERVER SETUP
-// =====================================================================
+
 void setupServer() {
   Serial.println("\n[Server] Configuring endpoints...");
   
@@ -419,12 +392,9 @@ void setupServer() {
   Serial.println("  - GET /api/alerts");
 }
 
-// =====================================================================
 // SENSOR READING
-// =====================================================================
+
 void readSensors() {
-  // Read DHT11 (Temperature & Humidity)
-  // Robust DHT reads with retries and smoothing
   float t = NAN, h = NAN;
   for (int i = 0; i < 3; i++) {
     t = dht.readTemperature();
@@ -433,10 +403,8 @@ void readSensors() {
     delay(50);
   }
   if (isnan(t) || isnan(h)) {
-    // Keep previous values if read fails to avoid spikes
     Serial.println("[Sensors] Warning: DHT read failed, keeping previous values");
   } else {
-    // Exponential moving average for stability
     state.temperature = (state.temperature == 0.0) ? t : (0.7f * state.temperature + 0.3f * t);
     state.humidity = (state.humidity == 0.0) ? h : (0.7f * state.humidity + 0.3f * h);
   }
@@ -493,9 +461,9 @@ void readSensors() {
                 state.mq7Value, state.dustValue, state.soundValue);
 }
 
-// =====================================================================
+
 // DUST SENSOR READING (Sharp GP2Y10)
-// =====================================================================
+
 int readDustSensor() {
   long accumulator = 0;
 
@@ -517,13 +485,11 @@ int readDustSensor() {
   return dust;
 }
 
-// =====================================================================
 // AIR QUALITY ASSESSMENT
-// =====================================================================
+
 void assessAirQuality() {
   String previousStatus = state.airQualityStatus;
   
-  // Count hazardous, poor, and moderate conditions
   int hazardCount = 0, poorCount = 0, moderateCount = 0;
   
   // Check MQ2 (Smoke/Gas)
@@ -583,9 +549,9 @@ void checkSensorAlerts() {
   }
 }
 
-// =====================================================================
+
 // BARRIER CONTROL LOGIC
-// =====================================================================
+
 void controlBarrier() {
   if (state.barrierAutoMode) {
     // Auto mode: close barrier if HAZARDOUS or POOR
@@ -639,9 +605,9 @@ void controlBarrier() {
   }
 }
 
-// =====================================================================
-// INDICATOR UPDATES (LEDs, Buzzer, Fan)
-// =====================================================================
+
+// INDICATOR UPDATES (LEDs, Buzzer)
+
 void updateIndicators() {
   // Turn off all LEDs first
   digitalWrite(LED_GREEN, LOW);
@@ -667,9 +633,9 @@ void updateIndicators() {
   }
 }
 
-// =====================================================================
+
 // ALERT MANAGEMENT
-// =====================================================================
+
 void addAlert(String message, String severity) {
   Alert newAlert;
   newAlert.message = message;
@@ -694,9 +660,9 @@ void addAlert(String message, String severity) {
   Serial.println(message);
 }
 
-// =====================================================================
+
 // EEPROM PERSISTENCE
-// =====================================================================
+
 void loadEEPROMConfig() {
   EEPROM.get(EEPROM_BARRIER_MODE_ADDR, state.barrierAutoMode);
   EEPROM.get(EEPROM_BARRIER_DURATION_ADDR, state.barrierDuration);
@@ -716,9 +682,8 @@ void saveEEPROMConfig() {
   Serial.println("[EEPROM] Configuration saved");
 }
 
-// =====================================================================
 // ESP8266 CONNECTION CHECK
-// =====================================================================
+
 void checkESP8266Connection() {
   int clientCount = WiFi.softAPgetStationNum();
   state.esp8266Connected = (clientCount > 0);
@@ -728,24 +693,11 @@ void checkESP8266Connection() {
   }
 }
 
-// =====================================================================
 // HTTP HANDLERS
-// =====================================================================
 
-// Root endpoint - serves the dashboard HTML
+// dashboard HTML
 void handleRoot() {
-  Serial.println("[Server] Request: GET /");
-  
-  /*
-   * ====================================================================
-   * >>> CUSTOM HTML INSERTION POINT <<<
-   * ====================================================================
-   * Replace the content between R"rawliteral( and )rawliteral" with your
-   * custom HTML dashboard code. The HTML provided in your document should
-   * be pasted here.
-   * ====================================================================
-   */
-  
+  Serial.println("[Server] Request: GET /"); 
   const char* html = R"rawliteral(
 <!DOCTYPE html>
 <html lang="en">
@@ -2709,9 +2661,9 @@ void handleNotFound() {
   Serial.println("[Server] 404: " + server.uri());
 }
 
-// =====================================================================
+
 // JSON BUILDER FOR SENSOR DATA
-// =====================================================================
+
 String getAirQualityJSON() {
   String json = "{";
   
