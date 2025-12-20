@@ -33,6 +33,10 @@ A key feature of Air Guardian is its **Automated Barrier Control System 🚧**, 
 - View live sensor data through gauges and charts
 - No external internet connection required
 
+<img width="1097" height="741" alt="Screenshot 2025-12-19 011257" src="https://github.com/user-attachments/assets/f9258992-e0a9-4536-ade4-2271fcd89f80" />
+<img width="1611" height="855" alt="Screenshot 2025-12-19 010414" src="https://github.com/user-attachments/assets/00c9fc18-c3b2-4659-9fd6-f0609e5357d3" />
+
+
 ### 🔔 Intelligent Alert System
 - Logs critical events such as hazardous gas levels
 - Timestamped alerts for easier incident tracking
