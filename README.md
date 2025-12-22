@@ -15,7 +15,8 @@ A key feature of Air Guardian is its **Automated Barrier Control System 🚧**, 
 
 ---
 
-## ✨ Key Features
+## Key Features
+ Listed below are the the fucntions featured in the miniature/prototype:
 
 ### 🔍 Multi-Sensor Fusion
 - DHT11 – Temperature & Humidity  
