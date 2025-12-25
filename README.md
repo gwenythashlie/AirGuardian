@@ -53,7 +53,8 @@ A key feature of Air Guardian is its **Automated Barrier Control System 🚧**, 
   - 🟢 Green – Safe
   - 🟡 Yellow – Warning
   - 🔴 Red – Hazardous
-- Buzzer and fan activation for immediate alerts and ventilation
+- Buzzer and fan activation for immediate alerts
+- OLED for display using ESP8266
 
 ### 🔌 RESTful API
 - JSON-based endpoints for system integration
