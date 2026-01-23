@@ -9,7 +9,7 @@
 
 ## 📖 Overview
 
-**Air Guardian** is an advanced IoT-based air quality monitoring system designed to enhance safety in indoor environments. Powered by an **ESP32**, the system continuously monitors **temperature, humidity, smoke, carbon monoxide, dust, and sound levels** in real time.
+**Air Guardian** is an advanced IoT-based air quality monitoring system designed to enhance safety in outdoor environments. Powered by an **ESP32**, the system continuously monitors **temperature, humidity, smoke, carbon monoxide, dust, and sound levels** in real time.
 
 A key feature of Air Guardian is its **Automated Barrier Control System 🚧**, which physically restricts access to a room when hazardous air conditions are detected. The system also provides a **standalone web dashboard 📊** for live data visualization and monitoring.
 
