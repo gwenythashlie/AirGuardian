@@ -1,7 +1,7 @@
 # 🌬️ AIR GUARDIAN 💻
 ## Smart Air Quality Monitoring System 🛡️
 
-**Version:** 2.0.0  
+**Version:** 2.0.1
 **Platform:** ESP32 and ESP8266 
 **Author:** Air Guardian Development Team (Group 1)
 
